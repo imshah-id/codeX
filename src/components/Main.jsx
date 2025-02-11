@@ -81,9 +81,12 @@ const Main = () => {
     }
   };
   return (
-    <section className="flex p-8 flex-grow shrink flex-col md:flex-row">
+    <section className="flex p-8 max-w-7xl mx-auto flex-grow shrink flex-col md:flex-row">
       {data.map(({ icon, name, para }) => (
-        <aside key={name} className="shadow-xl  p-4 m-2">
+        <aside
+          key={name}
+          className="border-1 border-indigo-100 shadow-xl p-4 m-2"
+        >
           <div className="flex ">
             {renderIcon(icon)}
             <h2 className="md:text-3xl text-xl font-semibold ">{name}</h2>
