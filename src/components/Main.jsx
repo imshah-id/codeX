@@ -85,9 +85,9 @@ const Main = () => {
       {data.map(({ icon, name, para }) => (
         <aside
           key={name}
-          className="border-1 border-indigo-100 shadow-xl p-4 m-2"
+          className="border-1 border-indigo-100 hover:scale-105 shadow-xl p-4 m-2"
         >
-          <div className="flex ">
+          <div className="flex hover:scale-105 ">
             {renderIcon(icon)}
             <h2 className="md:text-3xl text-xl font-semibold ">{name}</h2>
           </div>
