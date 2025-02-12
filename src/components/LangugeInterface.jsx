@@ -8,11 +8,11 @@ const LearningScreen = ({ language, onBack }) => {
   return (
     <div className="fixed top-0 left-0 w-full h-full bg-gray-100 text-gray-900 flex flex-col">
      
-      <header className="flex items-center gap-4 bg-indigo-400 p-2 md:p-4">
+      <header className="flex items-center gap-4 bg-indigo-500 p-2 md:p-4">
         <button className=" px-6 cursor-pointer p-2 rounded-lg" onClick={onBack}>
           <ArrowLeft/>
         </button>
-        <img className="w-12" src={language.logo} alt={language.name} />
+        <img className="md:w-12 w-10" src={language.logo} alt={language.name} />
         <h2 className="md:text-2xl text-lg text-white font-bold">{language.name}</h2>
       </header>
 
