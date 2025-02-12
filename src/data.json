@@ -1,17 +1,22 @@
 [
   {
     "name": "Python",
-    "logo": "/src/icons/python.svg",
+    "logo": "/icons/python.svg",
     "features": "A simple, powerful language known for its readability and versatility, widely used in web development, data science, and automation."
   },
   {
     "name": "JavaScript",
-    "logo": "/src/icons/javascript.svg",
+    "logo": "/icons/javascript.svg",
     "features": "A dynamic, high-level language essential for creating interactive websites and real-time web applications, both on the client and server side."
   },
   {
     "name": "C++",
-    "logo": "/src/icons/cpp.svg",
+    "logo": "/icons/cpp.svg",
     "features": "A performance-focused language used in system software, game development, and applications where efficiency and memory control are critical."
-  }
+  },
+    {
+      "name": "C",
+      "logo": "/public/icons/cpp.svg",
+      "features": "A performance-focused language used in system software, game development, and applications where efficiency and memory control are critical."
+    }
 ]
