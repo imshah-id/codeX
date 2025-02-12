@@ -19,7 +19,7 @@ const RoundedProgressBar = () => {
   }, []);
 
   return (
-    <div className=" p-8 shadow-lg mx-6 mb-10  ">
+    <div className=" p-12 shadow-lg mx-auto max-w-7xl mb-10  ">
       <div className="relative pt-1 ">
         <div className="flex mb-2 items-center justify-between">
           <h1 className="text-xl md:text-2xl font-semibold">Progress: {progress}%</h1>
@@ -28,7 +28,7 @@ const RoundedProgressBar = () => {
           <div className="w-full bg-gray-200 rounded-full h-2.5">
             <div
               className="bg-indigo-500 h-2.5 rounded-full"
-              style={{ width: `${progress}%`, transition: "width 1s ease" }}
+              style={{ width: `${progress}%`, transition: "width 0.s ease-in-out" }}
             ></div>
           </div>
         </div>
