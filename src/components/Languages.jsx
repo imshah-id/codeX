@@ -9,7 +9,7 @@ const Languages = () => {
     <section className="max-w-7xl mx-auto">
       {!selectedLanguage ? (
         <>
-          <h2 className="md:text-4xl text-2xl shadow-lg font-md p-8">
+          <h2 className="md:text-4xl text-2xl  font-md p-8">
             Select Language
           </h2>
           <div className="md:grid flex flex-col grid-cols-2 gap-6 p-6">
