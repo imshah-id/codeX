@@ -13,7 +13,7 @@ const Languages = () => {
               {name}
             </h2>
             <p className="text-gray-800">{features} </p>
-            <button className="p-2 text-md indent-1 mt-6 text-white bg-blue-500 rounded-3xl">
+            <button className="p-3 text-md hover:cursor-pointer hover:bg-indigo-500 indent-1 mt-6 text-white bg-indigo-400 rounded-3xl">
               Start Learning
             </button>
           </aside>
