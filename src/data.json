@@ -1,5 +1,10 @@
 [
   {
+    "name": "C",
+    "logo": "/icons/c.svg",
+    "features": "C is a fast, efficient, and portable programming language, widely used in system and application development."
+  },
+  {
     "name": "Python",
     "logo": "/icons/python.svg",
     "features": "A simple, powerful language known for its readability and versatility, widely used in web development, data science, and automation."
@@ -13,10 +18,5 @@
     "name": "C++",
     "logo": "/icons/cpp.svg",
     "features": "A performance-focused language used in system software, game development, and applications where efficiency and memory control are critical."
-  },
-    {
-      "name": "C",
-      "logo": "/public/icons/cpp.svg",
-      "features": "A performance-focused language used in system software, game development, and applications where efficiency and memory control are critical."
-    }
+  }
 ]
