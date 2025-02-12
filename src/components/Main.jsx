@@ -81,11 +81,11 @@ const Main = () => {
     }
   };
   return (
-    <section className="flex p-8 max-w-7xl mx-auto flex-grow shrink flex-col md:flex-row">
+    <section className="flex p-8 max-w-7xl mx-auto gap-3 flex-grow shrink flex-col md:flex-row">
       {data.map(({ icon, name, para }) => (
         <aside
           key={name}
-          className="border-1 border-indigo-100 hover:scale-105 shadow-xl p-4 m-2"
+          className="border-1 border-indigo-100 hover:scale-105 shadow-md p-5  mt-4"
         >
           <div className="flex hover:scale-105 ">
             {renderIcon(icon)}
