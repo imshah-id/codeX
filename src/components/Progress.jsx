@@ -13,7 +13,7 @@ const RoundedProgressBar = () => {
         }
         return prevProgress + 10; // Increment progress by 10% each interval
       });
-    }, 1000); // Update progress every second
+    }, 100); // Update progress every second
 
     return () => clearInterval(interval); // Clean up the interval on unmount
   }, []);
@@ -28,7 +28,7 @@ const RoundedProgressBar = () => {
           <div className="w-full bg-gray-200 rounded-full h-2.5">
             <div
               className="bg-indigo-500 h-2.5 rounded-full"
-              style={{ width: `${progress}%`, transition: "width 0.s ease-in-out" }}
+              style={{ width: `${progress}%`, transition: "width .10s ease-in-out" }}
             ></div>
           </div>
         </div>
