@@ -13,7 +13,7 @@ const Languages = () => {
           <h2 className="md:text-4xl text-2xl  font-md p-8">
             Select Language
           </h2>
-          <div className="md:grid flex flex-col grid-cols-2 gap-6 p-6">
+          <div className="md:grid w-full flex flex-col grid-cols-2 gap-6 p-6">
             {Dat.map(({ name, logo, features }) => (
               <aside
                 key={name}
