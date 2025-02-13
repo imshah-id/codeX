@@ -24,7 +24,7 @@ const Languages = () => {
                 </h2>
                 <p className="text-gray-800">{features}</p>
                 <button
-                  className="p-3 w-full text-md hover:cursor-pointer hover:bg-indigo-500 mt-6 text-white bg-indigo-400 rounded-lg"
+                  className="p-3 w-full text-md hover:cursor-pointer bg-indigo-500 hover:bg-indigo-600 mt-6 text-white md:bg-indigo-400 rounded-lg"
                   onClick={() => setSelectedLanguage({ name, logo })}
                 >
                   Start Learning

@@ -61,7 +61,7 @@ const LearningScreen = ({ language, onBack }) => {
             </h2>
             <p className="border-l-4 p-6 text-amber-800 bg-red-50 border-amber-600">
               Practice exercises are coming soon! Here you'll be able to solve
-              coding challenges and improve your Python skills through
+              coding challenges and improve your {language.name} skills through
               interactive problems.
             </p>
           </div>
@@ -73,7 +73,7 @@ const LearningScreen = ({ language, onBack }) => {
             </h2>
             <p className="border-l-4 p-6 text-blue-800 bg-blue-50 border-blue-600">
               Real-world projects are coming soon! You'll be able to build
-              practical applications and strengthen your Python expertise
+              practical applications and strengthen your {language.name} expertise
               through guided project-based learning.
             </p>
           </div>
