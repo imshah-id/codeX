@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import Dat from "/src/data.json";
+import Dat from "/src/data/data.json";
 import LearningScreen from "./LangugeInterface";
 
 const Languages = () => {
   const [selectedLanguage, setSelectedLanguage] = useState(null);
+     
 
   return (
     <section className="max-w-7xl mx-auto">
@@ -32,11 +33,14 @@ const Languages = () => {
               </aside>
             ))}
           </div>
+          
         </>
       ) : (
         <LearningScreen
           language={selectedLanguage}
           onBack={() => setSelectedLanguage(null)}
+
+      
         />
       )}
     </section>

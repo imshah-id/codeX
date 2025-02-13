@@ -1,0 +1,96 @@
+{
+  "languages": [
+    {
+      "name": "C Langugae",
+      "topics": [
+        {
+          "level": "Beginner",
+          "name": "Variables and Data Types",
+          "intro": "Learn about variables and basic data types in C.",
+          "details": "In C, variables are used to store data. Data types specify the type of data a variable can store. Common data types include int, float, char, and double."
+        },
+        {
+          "level": "Intermediate",
+          "name": "Pointers",
+          "intro": "Explore the concept of pointers in C and how they work.",
+          "details": "Pointers in C are variables that store the address of another variable. They are essential for dynamic memory allocation and for working with arrays and functions."
+        },
+        {
+          "level": "Advanced",
+          "name": "Memory Management",
+          "intro": "Advanced memory management techniques in C.",
+          "details": "Memory management in C is critical for optimizing resource usage. It involves using functions like malloc, free, and realloc to allocate and deallocate memory dynamically."
+        }
+      ]
+    },
+    {
+      "name": "C++",
+      "topics": [
+        {
+          "level": "Beginner",
+          "name": "Object-Oriented Programming",
+          "intro": "Introduction to object-oriented programming (OOP) in C++.",
+          "details": "C++ supports object-oriented programming, which includes concepts such as classes, objects, inheritance, and polymorphism. This allows for better code organization and reusability."
+        },
+        {
+          "level": "Intermediate",
+          "name": "STL (Standard Template Library)",
+          "intro": "Understanding the Standard Template Library in C++.",
+          "details": "STL in C++ provides several built-in generic classes and functions. It includes containers like vectors, stacks, queues, and algorithms for sorting and searching."
+        },
+        {
+          "level": "Advanced",
+          "name": "Multi-threading",
+          "intro": "Implementing multi-threading in C++ for parallel execution.",
+          "details": "Multi-threading in C++ allows for parallel execution of tasks. It involves creating threads using the <thread> library, synchronizing access to shared resources, and avoiding race conditions."
+        }
+      ]
+    },
+    {
+      "name": "JavaScript",
+      "topics": [
+        {
+          "level": "Beginner",
+          "name": "Variables and Functions",
+          "intro": "Basics of variables and functions in JavaScript.",
+          "details": "JavaScript uses variables to store data. Variables can be declared using var, let, or const. Functions in JavaScript are blocks of code that can be invoked to perform tasks."
+        },
+        {
+          "level": "Intermediate",
+          "name": "DOM Manipulation",
+          "intro": "Learn how to manipulate the DOM (Document Object Model) in JavaScript.",
+          "details": "The DOM represents the structure of a web page. JavaScript can manipulate the DOM by accessing and modifying HTML elements, such as adding or removing elements, changing content, or altering styles."
+        },
+        {
+          "level": "Advanced",
+          "name": "Asynchronous Programming",
+          "intro": "Advanced concepts of asynchronous programming in JavaScript.",
+          "details": "Asynchronous programming allows code to run without blocking. In JavaScript, this is commonly achieved using callbacks, promises, and async/await, enabling better performance for web applications."
+        }
+      ]
+    },
+    {
+      "name": "Python",
+      "topics": [
+        {
+          "level": "Beginner",
+          "name": "Data Types and Variables",
+          "intro": "Introduction to data types and variables in Python.",
+          "details": "Python offers several built-in data types such as integers, floats, strings, and lists. Variables in Python are dynamically typed, meaning their type is inferred during execution."
+        },
+        {
+          "level": "Intermediate",
+          "name": "File Handling",
+          "intro": "Working with files in Python.",
+          "details": "Python provides several methods to handle files, including opening, reading, writing, and closing files. It supports both text and binary file formats."
+        },
+        {
+          "level": "Advanced",
+          "name": "Decorators and Generators",
+          "intro": "Advanced concepts of decorators and generators in Python.",
+          "details": "Decorators in Python allow you to modify the behavior of a function or method. Generators are a special type of iterable that allow you to generate data on the fly without storing it in memory."
+        }
+      ]
+    }
+  ]
+}
