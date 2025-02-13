@@ -1,29 +1,43 @@
 /* eslint-disable react/prop-types */
-import React, { useState, useEffect } from "react";
-import { ArrowLeft, BookOpen, Code, Layout } from "react-feather";
+import React, { useState } from "react";
+import { ArrowLeft, BookOpen, Code, Layout,PlayCircle,X } from "react-feather";
 import Exercise from "/src/data/exercise.json";
 
 const LearningScreen = ({ language, onBack }) => {
   const [activeTab, setActiveTab] = useState("Exercise");
+  const [learn ,setLearn] =useState(null)
   const filteredLanguage = Exercise.languages.find(
     (data) => data.name === language.name
   );
+  
   // Icons for different tabs
   const icons = (tab) => {
     switch (tab) {
       case "Exercise":
-        return <BookOpen />;
+        return <BookOpen  />;
       case "Practice":
-        return <Code />;
+        return <Code  />;
       case "Projects":
-        return <Layout />;
+        return <Layout  />;
       default:
         return null;
     }
   };
+  const levelColor = (xyz) => {
+    switch (xyz) {
+      case "Beginner":
+        return "bg-green-100 text-green-900";
+      case "Intermediate":
+        return "bg-yellow-100 text-yellow-900";
+      case "Advanced":
+        return "bg-red-100 text-red-900";
+      default:
+        return "bg-gray-300";
+    }
+  };
 
   return (
-    <div className="fixed top-0 left-0 w-full h-full bg-gray-100 text-gray-900 flex flex-col">
+    <div className="fixed top-0 left-0 w-full h-full bg-gray-50 text-gray-900 flex flex-col">
       <header className="flex items-center gap-4 bg-indigo-500 p-2 md:p-4">
         <button className="px-6 cursor-pointer p-2 rounded-lg" onClick={onBack}>
           <ArrowLeft className="stroke-white" />
@@ -35,11 +49,11 @@ const LearningScreen = ({ language, onBack }) => {
       </header>
 
       {/* Navigation Bar */}
-      <nav className="flex bg-white px-3">
+      <nav className="flex bg-white px-2">
         {["Exercise", "Practice", "Projects"].map((tab) => (
           <button
             key={tab}
-            className={`mx-4 flex gap-1 w-fit p-2 md:p-4 ${
+            className={`md:mx-4 mx-auto flex cursor-pointer gap-1 w-fit  p-1 md:p-4 ${
               activeTab === tab ? "border-b-2 shadow-md" : ""
             }`}
             onClick={() => setActiveTab(tab)}
@@ -52,22 +66,36 @@ const LearningScreen = ({ language, onBack }) => {
       {/* Tab Content */}
       <div className="p-6">
         {activeTab === "Exercise" && (
-          <section className="s">
+
+          
+          (!learn )?(
+              <main>
+
+          <section className="">
             <h1 className="font-semibold text-lg md:text-2xl pb-4">
               Getting Started with {language.name}
             </h1>
             {filteredLanguage ? (
-              <div className="md:grid flex flex-col grid-cols-2  gap-2 p-4">
+              <div className="md:grid flex flex-col grid-cols-2  gap-4  p-4">
                 {filteredLanguage.topics.map((topic, index) => (
-                  <div key={index} className="bg-white p-4 shadow-2xl">
-                    <h2 className="md:text-2xl text-gray-700 font-medium">
+                  <div
+                    key={index}
+                    className="bg-white hover:scale-105 rounded-2xl flex flex-col justify-around p-4  md:p-6  shadow-2xl"
+                  >
+                    <h2 className="md:text-2xl text-gray-900 font-medium">
                       {topic.name}
                     </h2>
-                    <p>{topic.intro}</p>
-                    <section className="flex justify-between py-4">
-                      <h2>Level: {topic.level}</h2>
-                      <button className="bg-blue-500 text-white py-2 px-4 rounded">
-                        Start
+                    <p className="text-gray-600 text-sm md:text-lg">{topic.intro}</p>
+                    <section className="flex justify-between mt-10 py-">
+                      <h2
+                        className={`${levelColor(
+                          topic.level
+                        )} md:text-base text-bold rounded-xl p-2`}
+                        >
+                        Level: {topic.level}
+                      </h2>
+                      <button onClick={()=>setLearn({title:topic.name,intro:topic.intro,details:topic.details})} className=" flex gap-1 text-indigo-800 py-2 px-4 cursor-pointer rounded">
+                        {<PlayCircle/>}Start
                       </button>
                     </section>
                   </div>
@@ -77,6 +105,20 @@ const LearningScreen = ({ language, onBack }) => {
               <p>No topics available for this language.</p>
             )}
           </section>
+            </main>
+            ):(
+              <section className="relative shadow-2xl h-dvh bg-white p-2">
+                <X className="absolute cursor-pointer right-1" onClick={()=>setLearn(null)}/>
+                  <header className="shadow-sm
+                  pb-3">
+                    <h1 className="md:text-4xl text-lg font-semibold text-gray-900   p-2">{learn.title}</h1>
+                    
+                    <p className="p-2 md:text-2xl text-gray-700 ">{learn.intro}</p>
+                  </header>
+                  <p className="p-2 pt-3 md:text-xl text-gray-500 ">{learn.details}</p>
+              </section>
+            )
+          
         )}
 
         {activeTab === "Practice" && (
