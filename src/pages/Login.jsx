@@ -10,11 +10,13 @@ const Login = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
+    const uri = localStorage.getItem("base_uri");
+
 
   const onSubmit = async (data) => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/auth/login",
+        `${uri}/api/auth/login `,
         data
       );
 

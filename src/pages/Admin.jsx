@@ -26,12 +26,13 @@ const Admin = () => {
     setValue,
     formState: { errors },
   } = useForm();
+    const uri = localStorage.getItem("base_uri");
 
   // Fetch Languages
   const fetchLanguages = useCallback(async () => {
     try {
       const response = await axios.get(
-        "http://localhost:5000/api/languages/language"
+        `${uri}api/languages/language`
       );
       setData((prevData) => ({ ...prevData, languages: response.data }));
     } catch (err) {
@@ -47,7 +48,7 @@ const Admin = () => {
     if (!data.selectedLanguage) return;
     try {
       const response = await axios.get(
-        "http://localhost:5000/api/topics/listtopics",
+        `${uri}/api/topics/listtopics`,
         {
           params: { nam: data.selectedLanguage },
         }
@@ -99,7 +100,7 @@ const handelDeletes = async (tobeDeleted) => {
   try {
     console.log(tobeDeleted)
     await axios.delete(
-      `http://localhost:5000/api/languages/landelete/${tobeDeleted}`
+      `${uri}/api/languages/landelete/${tobeDeleted}`
     );
     setData((prevData) => ({
       ...prevData,
@@ -118,20 +119,20 @@ const handelDeletes = async (tobeDeleted) => {
     try {
       if (formMode === "add") {
         formData.name = data.selectedLanguage;
-        await axios.post("http://localhost:5000/api/topics/addtopic", {
+        await axios.post(`${uri}/api/topics/addtopic`, {
           language: data.selectedLanguage,
           ...formData,
         });
         alert("New topic added successfully!");
       } else if (formMode === "edit") {
         formData.name = data.selectedLanguage;
-        await axios.put("http://localhost:5000/api/topics/topicput", {
+        await axios.put(`${uri}/api/topics/topicput`, {
           ...formData,
         });
         alert("Topic updated successfully!");
       }else if (isOn){
         try {
-            await axios.post("http://localhost:5000/api/languages/addlan",
+            await axios.post(`${uri}/api/languages/addlan`,
 
         {...formData})
                 alert("Language has been added successfully!");
@@ -144,7 +145,7 @@ const handelDeletes = async (tobeDeleted) => {
         try {
           formData.name = lanName;
           console.log(formData);
-          await axios.put("http://localhost:5000/api/languages/updatelan",
+          await axios.put(`${uri}/api/languages/updatelan`,
             
           {...formData}
           );
@@ -172,7 +173,7 @@ const handelDeletes = async (tobeDeleted) => {
     if (confirmDelete) {
       try {
          await axios.delete(
-          `http://localhost:5000/api/topics/deletetopic/${topicId}`
+          `${uri}/api/topics/deletetopic/${topicId}`
         );
         setData((prevData) => ({
           ...prevData,

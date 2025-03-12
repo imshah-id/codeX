@@ -1,8 +1,11 @@
 import React from "react";
 import Details from "./Details";
+
 import ProgressBar from "./Progressbar";
 import LanguageSelection from "./LanguageSelection";
 const Header = () => {
+const BASE_URI = import.meta.env.VITE_BASE_URI;
+  localStorage.setItem("base_uri",BASE_URI);
   return (
     <>
       <header className="flex flex-col  items-center">

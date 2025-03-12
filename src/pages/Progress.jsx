@@ -5,13 +5,14 @@ const Progress = ({ userId }) => {
   const [progressData, setProgressData] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+    const uri = localStorage.getItem("base_uri");
 
   useEffect(() => {
     const fetchProgress = async () => {
       try {
         const userId = localStorage.getItem("userId");
         const response = await axios.get(
-          `http://localhost:5000/api/user/progress/${userId}`
+          `${uri}/api/user/progress/${userId}`
         );
         setProgressData(response.data);
         setLoading(false);

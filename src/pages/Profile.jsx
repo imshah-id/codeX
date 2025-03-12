@@ -10,6 +10,7 @@ const Profile = () => {
   const [newPassword, setNewPassword] = useState("");
   const [editEmail, setEditEmail] = useState(false);
   const [editPassword, setEditPassword] = useState(false);
+    const uri = localStorage.getItem("base_uri");
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -18,7 +19,7 @@ const Profile = () => {
 
         if (userId) {
           const response = await axios.get(
-            `http://localhost:5000/api/profile/user/${userId}`
+            `${uri}/api/profile/user/${userId}`
           );
           setUser(response.data);
         } else {
@@ -42,7 +43,7 @@ const Profile = () => {
     if (window.confirm("Are you sure you want to update your email?")) {
       try {
         const userId = localStorage.getItem("userId");
-        await axios.put(`http://localhost:5000/api/profile/user/${userId}`, {
+        await axios.put(`${uri}/api/profile/user/${userId}`, {
           email: newEmail,
         });
 
@@ -67,7 +68,7 @@ const Profile = () => {
     if (window.confirm("Are you sure you want to change your password?")) {
       try {
         const userId = localStorage.getItem("userId");
-        await axios.put(`http://localhost:5000/api/profile/user/${userId}`, {
+        await axios.put(`${uri}/api/profile/user/${userId}`, {
           password: newPassword,
         });
 

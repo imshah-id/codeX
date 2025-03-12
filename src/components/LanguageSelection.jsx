@@ -8,12 +8,12 @@ const LanguageSelection = () => {
   const [error, setError] = useState(null);
   const [learn, setLearn] = useState(null);
   const [confirmPopup, setConfirmPopup] = useState(null);
-
+  const uri = localStorage.getItem("base_uri")
   useEffect(() => {
     const fetchLanguages = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/languages/language"
+          `${uri}/api/languages/language`
         );
         setLanguages(response.data);
         setLoading(false);
@@ -42,7 +42,7 @@ const LanguageSelection = () => {
     try {
       const userId = localStorage.getItem("userId");
 
-      await axios.post("http://localhost:5000/api/user/progress/add", {
+      await axios.post(`${uri}/api/user/progress/add`, {
         userId,
         language: language.name,
       });

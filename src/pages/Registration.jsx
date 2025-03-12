@@ -13,11 +13,12 @@ const Registration = () => {
   } = useForm();
 
   const onSubmit = async (data) => {
-        console.log(data);
+         const uri = localStorage.getItem("base_uri");
+
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/auth/register",
+        `${uri}/api/auth/register`,
         data
       );
       console.log("Registration Successful:", response.data);

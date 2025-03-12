@@ -11,12 +11,13 @@ const Learning = ({ Learning, onBack, userId }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [bookmarked, setBookmarked] = useState([]);
   const [progress, setProgress] = useState({ completed: [], pending: [] });
+    const uri = localStorage.getItem("base_uri");
 
   useEffect(() => {
     async function fetchTopics() {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/topics/listtopics",
+          `${uri}/api/topics/listtopics`,
           { params: { nam: Learning.name } }
         );
         setTopics(response.data);
@@ -34,7 +35,7 @@ const Learning = ({ Learning, onBack, userId }) => {
   async function fetchOrInitProgress(fetchedTopics) {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/progress/${userId}`
+        `${uri}/api/progress/${userId}`
       );
 
       // If language progress exists, update state
@@ -53,7 +54,7 @@ const Learning = ({ Learning, onBack, userId }) => {
   async function initializeProgress(fetchedTopics) {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/progress/add",
+        `${uri}/api/progress/add`,
         {
           userId,
           language: Learning.name,
@@ -69,7 +70,7 @@ const Learning = ({ Learning, onBack, userId }) => {
   // Mark topic as completed
   async function markAsCompleted(topic) {
     try {
-      await axios.post("http://localhost:5000/api/progress/complete", {
+      await axios.post(`${uri}/api/progress/complete`, {
         userId,
         language: Learning.name,
         topic,
