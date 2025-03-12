@@ -10,22 +10,18 @@ const Login = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-const uri = import.meta.env.VITE_BASE_URI;
-
+  const uri = import.meta.env.VITE_BASE_URI;
 
   const onSubmit = async (data) => {
     try {
-      const response = await axios.post(
-        `${uri}/api/auth/login `,
-        data
-      );
+      const response = await axios.post(`${uri}/api/auth/login`, data);
 
-      console.log("Login Response:", response.data); 
+      console.log("Login Response:", response.data);
       const { id, role } = response.data.user;
       localStorage.setItem("userId", id);
       localStorage.setItem("userRole", role);
       localStorage.setItem("token", response.data.token);
-      window.dispatchEvent(new Event("storage")); 
+      window.dispatchEvent(new Event("storage"));
 
       alert("Login Successful!");
       navigate("/profile");
@@ -69,6 +65,17 @@ const uri = import.meta.env.VITE_BASE_URI;
         >
           Login
         </button>
+
+        {/* Sign Up Link */}
+        <p className="text-center mt-4">
+          Don't have an account?{" "}
+          <span
+            className="text-blue-600 cursor-pointer hover:underline"
+            onClick={() => navigate("/register")}
+          >
+            Sign Up
+          </span>
+        </p>
       </form>
     </div>
   );
