@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback,  useState } from "react";
 import { IoPlayCircleOutline } from "react-icons/io5";
 import { FaArrowLeft, FaBookmark } from "react-icons/fa";
 import { FiSearch, FiBookmark } from "react-icons/fi";
@@ -13,7 +13,7 @@ const Learning = ({ Learning, onBack, userId }) => {
   const [progress, setProgress] = useState({ completed: [], pending: [] });
 const uri = import.meta.env.VITE_BASE_URI;
 
-  useEffect(() => {
+  useCallback(() => {
     async function fetchTopics() {
       try {
         const response = await axios.get(
