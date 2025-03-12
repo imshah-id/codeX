@@ -29,7 +29,6 @@ const uri = import.meta.env.VITE_BASE_URI;
 
       alert("Login Successful!");
       navigate("/profile");
-      window.location.reload();
     } catch (error) {
       console.error("Login Failed:", error.response?.data || error.message);
       alert("Invalid email or password");

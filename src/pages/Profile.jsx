@@ -90,7 +90,6 @@ const uri = import.meta.env.VITE_BASE_URI;
       localStorage.removeItem("userRole");
       localStorage.removeItem("userId");
       navigate("/");
-      window.location.reload();
     }
   };
 
