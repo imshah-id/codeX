@@ -32,7 +32,7 @@ const uri = import.meta.env.VITE_BASE_URI;
   const fetchLanguages = useCallback(async () => {
     try {
       const response = await axios.get(
-        `${uri}api/languages/language`
+        `${uri}/api/languages/language`
       );
       setData((prevData) => ({ ...prevData, languages: response.data }));
     } catch (err) {
