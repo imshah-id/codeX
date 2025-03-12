@@ -8,7 +8,7 @@ const LanguageSelection = () => {
   const [error, setError] = useState(null);
   const [learn, setLearn] = useState(null);
   const [confirmPopup, setConfirmPopup] = useState(null);
-  const uri = localStorage.getItem("base_uri")
+const uri = import.meta.env.VITE_BASE_URI;
   useEffect(() => {
     const fetchLanguages = async () => {
       try {

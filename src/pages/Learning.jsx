@@ -11,7 +11,7 @@ const Learning = ({ Learning, onBack, userId }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [bookmarked, setBookmarked] = useState([]);
   const [progress, setProgress] = useState({ completed: [], pending: [] });
-    const uri = localStorage.getItem("base_uri");
+const uri = import.meta.env.VITE_BASE_URI;
 
   useEffect(() => {
     async function fetchTopics() {

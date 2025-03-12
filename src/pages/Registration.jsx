@@ -13,7 +13,7 @@ const Registration = () => {
   } = useForm();
 
   const onSubmit = async (data) => {
-         const uri = localStorage.getItem("base_uri");
+const uri = import.meta.env.VITE_BASE_URI;
 
 
     try {

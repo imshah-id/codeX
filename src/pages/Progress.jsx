@@ -5,7 +5,7 @@ const Progress = ({ userId }) => {
   const [progressData, setProgressData] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-    const uri = localStorage.getItem("base_uri");
+const uri = import.meta.env.VITE_BASE_URI;
 
   useEffect(() => {
     const fetchProgress = async () => {

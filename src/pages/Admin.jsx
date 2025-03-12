@@ -26,7 +26,7 @@ const Admin = () => {
     setValue,
     formState: { errors },
   } = useForm();
-    const uri = localStorage.getItem("base_uri");
+const uri = import.meta.env.VITE_BASE_URI;
 
   // Fetch Languages
   const fetchLanguages = useCallback(async () => {

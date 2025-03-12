@@ -10,7 +10,7 @@ const Profile = () => {
   const [newPassword, setNewPassword] = useState("");
   const [editEmail, setEditEmail] = useState(false);
   const [editPassword, setEditPassword] = useState(false);
-    const uri = localStorage.getItem("base_uri");
+const uri = import.meta.env.VITE_BASE_URI;
 
   useEffect(() => {
     const fetchUserData = async () => {

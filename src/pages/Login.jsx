@@ -10,7 +10,7 @@ const Login = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-    const uri = localStorage.getItem("base_uri");
+const uri = import.meta.env.VITE_BASE_URI;
 
 
   const onSubmit = async (data) => {
