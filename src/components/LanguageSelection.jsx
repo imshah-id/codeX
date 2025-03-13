@@ -15,35 +15,26 @@ const LanguageSelection = () => {
   // Function to fetch languages and user data
   const fetchData = async () => {
     try {
+      // Fetch available languages from the API
+      const langRes = await axios.get(`${uri}/api/languages/language`);
+      setLanguages(langRes.data); // Set available languages in the state
+
       if (!userId) {
-        setLoading(false); // If no userId, we stop loading
+        setLoading(false); // Stop loading for non-logged-in users
         return;
       }
 
-      // Load previously stored user languages from localStorage
-      const storedLanguages =
-        JSON.parse(localStorage.getItem("userLanguages")) || [];
+      // Fetch user data if logged in
+      const userRes = await axios.get(`${uri}/api/user/${userId}`);
 
-      // Fetch languages and user data concurrently
-      const [langRes, userRes] = await Promise.all([
-        axios.get(`${uri}/api/languages/language`),
-        axios.get(`${uri}/api/user/${userId}`),
-      ]);
+      const userLangs = new Set(
+        userRes.data.languages ? Object.keys(userRes.data.languages) : []
+      );
+      setUserLanguages(userLangs); // Set user languages (if any)
 
-      // Handle new user without any languages
-      const userLangs = userRes.data.languages
-        ? new Set([
-            ...storedLanguages,
-            ...(typeof userRes.data.languages === "object"
-              ? Object.keys(userRes.data.languages)
-              : []),
-          ])
-        : new Set(storedLanguages); // For new users, use stored languages or empty set
-
-      // Update state
-      setLanguages(langRes.data);
-      setUserLanguages(userLangs);
+      // Store the user's languages in localStorage for persistence
       localStorage.setItem("userLanguages", JSON.stringify([...userLangs]));
+
       setLoading(false); // Stop loading once the data is fetched
     } catch (error) {
       console.error("Error fetching data:", error);
