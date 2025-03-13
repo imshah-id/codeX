@@ -1,84 +1,84 @@
-import { React, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import Learning from "../pages/Learning";
 
 const LanguageSelection = () => {
   const [languages, setLanguages] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [learn, setLearn] = useState(null);
   const [confirmPopup, setConfirmPopup] = useState(null);
-  const [userLanguages, setUserLanguages] = useState([]);
+  const [userLanguages, setUserLanguages] = useState(new Set());
 
   const uri = import.meta.env.VITE_BASE_URI;
   const userId = localStorage.getItem("userId");
 
   useEffect(() => {
-    const fetchLanguages = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get(`${uri}/api/languages/language`);
-        setLanguages(response.data);
+        // Load previously stored user languages from localStorage
+        const storedLanguages =
+          JSON.parse(localStorage.getItem("userLanguages")) || [];
+
+        const [langRes, userRes] = await Promise.all([
+          axios.get(`${uri}/api/languages/language`),
+          userId
+            ? axios.get(`${uri}/api/user/${userId}`)
+            : Promise.resolve({ data: {} }),
+        ]);
+
+
+        // Convert object keys to array if API response is an object
+        const userLangs = new Set([
+          ...storedLanguages,
+          ...(userRes.data.languages &&
+          typeof userRes.data.languages === "object"
+            ? Object.keys(userRes.data.languages)
+            : []),
+        ]);
+
+
+        setLanguages(langRes.data);
+        setUserLanguages(userLangs);
+        localStorage.setItem("userLanguages", JSON.stringify([...userLangs]));
       } catch (error) {
-        console.error("Error fetching languages:", error);
-        setError("Failed to fetch data");
-      } finally {
-        setLoading(false);
+        console.error("Error fetching data:", error);
       }
     };
 
-    const fetchUserLanguages = async () => {
-      if (!userId) return;
-      try {
-        const response = await axios.get(`${uri}/api/user/${userId}`);
-        setUserLanguages(response.data.languages || []);
-      } catch (error) {
-        console.error("Error fetching user progress:", error);
-        setUserLanguages([]);
-      }
-    };
-
-    fetchLanguages();
-    fetchUserLanguages();
+    fetchData();
   }, [userId]);
 
-  const handleNo = () => setConfirmPopup(null);
-
   const handleConfirm = async (language) => {
-    try {
-      if (!userId) return;
+    if (!userId) return;
 
+    try {
       await axios.post(`${uri}/api/user/add`, {
         userId,
         language: language.name,
       });
 
-      setUserLanguages((prev) =>
-        Array.isArray(prev) ? [...prev, language.name] : [language.name]
-      );
+      setUserLanguages((prev) => {
+        const updatedSet = new Set(prev);
+        updatedSet.add(language.name);
+        localStorage.setItem("userLanguages", JSON.stringify([...updatedSet]));
+        return updatedSet;
+      });
 
-      setLearn(language); // 🚀 Immediately open topics
+      setLearn(language);
     } catch (error) {
-      console.error("Error adding language to progress:", error);
-      alert("Failed to add language to progress");
+      console.error("Error adding language:", error);
     } finally {
       setConfirmPopup(null);
     }
   };
 
   const openConfirmPopup = (language) => {
-    const isLanguageAdded =
-      Array.isArray(userLanguages) && userLanguages.includes(language.name);
 
-    if (!userId || isLanguageAdded) {
-      setLearn(language); // 🚀 Open topics directly
-      return;
+    if (!userId || userLanguages.has(language.name)) {
+      setLearn(language); // Skip popup if already added
+    } else {
+      setConfirmPopup(language);
     }
-
-    setConfirmPopup(language);
   };
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div className="text-center">{error}</div>;
 
   return (
     <section className="max-w-7xl mx-auto">
@@ -100,7 +100,7 @@ const LanguageSelection = () => {
                 </div>
                 <button
                   onClick={() => openConfirmPopup({ name, logo })}
-                  className="p-3 w-full text-md hover:cursor-pointer bg-indigo-500 hover:bg-indigo-600 mt-auto text-white md:bg-indigo-400 rounded-lg transition-all"
+                  className="p-3 w-full text-md bg-indigo-500 hover:bg-indigo-600 mt-auto text-white rounded-lg transition-all"
                 >
                   Start Learning
                 </button>
@@ -112,10 +112,9 @@ const LanguageSelection = () => {
         <Learning Learning={learn} onBack={() => setLearn(null)} />
       )}
 
-      {/* ✅ Glassmorphism Confirmation Popup */}
       {confirmPopup && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-md">
-          <div className="bg-white/90 shadow-xl rounded-2xl p-8 w-[90%] max-w-md text-center animate-fadeInUp">
+          <div className="bg-white/90 shadow-xl rounded-2xl p-8 w-[90%] max-w-md text-center">
             <img
               src={
                 confirmPopup.logo ||
@@ -128,20 +127,16 @@ const LanguageSelection = () => {
               Add <span className="text-indigo-500">{confirmPopup.name}</span>{" "}
               to your progress?
             </h3>
-            <p className="text-gray-600 mt-2">
-              You can track your learning anytime.
-            </p>
-
             <div className="flex justify-center gap-4 mt-6">
               <button
                 onClick={() => handleConfirm(confirmPopup)}
-                className="px-6 py-2 text-lg bg-indigo-500 text-white rounded-full shadow-md hover:bg-indigo-600 transition-all"
+                className="px-6 py-2 text-lg bg-indigo-500 text-white rounded-full shadow-md hover:bg-indigo-600"
               >
                 Yes, Add
               </button>
               <button
-                onClick={handleNo}
-                className="px-6 py-2 text-lg bg-gray-300 text-gray-800 rounded-full shadow-md hover:bg-gray-400 transition-all"
+                onClick={() => setConfirmPopup(null)}
+                className="px-6 py-2 text-lg bg-gray-300 text-gray-800 rounded-full shadow-md hover:bg-gray-400"
               >
                 Cancel
               </button>

@@ -4,19 +4,19 @@ const ProgressBar = () => {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const prog = parseInt(localStorage.getItem("prog")) || 0; // Ensure it's a number
+    const overallProgress = parseInt(localStorage.getItem("overallProg")) || 0; // Retrieve overall progress from localStorage
 
-    if (prog <= 0) return; // If no valid progress, don't run animation
+    if (overallProgress <= 0) return; // If no valid progress, don't run animation
 
     const interval = setInterval(() => {
       setProgress((prevProgress) => {
-        const nextProgress = Math.min(prevProgress + 10, prog); // Ensure it stops at prog
-        if (nextProgress === prog) clearInterval(interval);
+        const nextProgress = Math.min(prevProgress + 10, overallProgress); // Ensure it stops at overallProgress
+        if (nextProgress === overallProgress) clearInterval(interval); // Stop interval when progress reaches overall progress
         return nextProgress;
       });
     }, 100);
 
-    return () => clearInterval(interval);
+    return () => clearInterval(interval); // Cleanup interval on unmount
   }, []);
 
   return (
@@ -25,7 +25,7 @@ const ProgressBar = () => {
         <div className="relative pt-1">
           <div className="flex mb-2 items-center justify-between">
             <h1 className="text-xl md:text-2xl font-semibold text-indigo-700">
-              Progress: {progress}%
+              Overall Progress: {progress}%
             </h1>
           </div>
           <div className="flex mb-2">
@@ -34,7 +34,7 @@ const ProgressBar = () => {
                 className="bg-indigo-500 h-2.5 rounded-full"
                 style={{
                   width: `${progress}%`,
-                  transition: "width 0.5s ease-in-out",
+                  transition: "width 0.5s ease-in-out", // Smooth transition
                 }}
               ></div>
             </div>

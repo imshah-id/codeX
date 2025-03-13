@@ -71,6 +71,36 @@ const Learning = ({ Learning, onBack }) => {
     }
   }
 
+  // Function to mark topic as completed
+  async function markAsCompleted(topicTitle) {
+    try {
+      // Check if the topic is already completed
+      if (progress.completed.includes(topicTitle)) {
+        console.log("Topic already completed!");
+        return; // Exit the function if the topic is already marked as completed
+      }
+
+      const response = await axios.post(`${uri}/api/user/complete`, {
+        userId,
+        language: Learning.name,
+        topic: topicTitle,
+      });
+
+      if (response.data.success) {
+        // Update progress state immediately after completing a topic
+        setProgress((prevProgress) => {
+          const updatedCompleted = [...prevProgress.completed, topicTitle];
+          const updatedPending = prevProgress.pending.filter(
+            (t) => t !== topicTitle
+          );
+          return { completed: updatedCompleted, pending: updatedPending };
+        });
+      }
+    } catch (error) {
+      console.log("Error marking topic as completed", error);
+    }
+  }
+
   const filteredTopics = topics.filter((t) =>
     t.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -118,7 +148,7 @@ const Learning = ({ Learning, onBack }) => {
                 <h1 className="font-semibold text-lg md:text-2xl p-4">
                   Getting Started with {Learning.name}
                 </h1>
-                <div className="md:grid flex flex-col grid-cols-2 mb-16 gap-4 p-4">
+                <div className="md:grid flex flex-col grid-cols-2 mb-12 gap-4 p-4">
                   {filteredTopics.map((t) => (
                     <div
                       key={t.title}
@@ -175,6 +205,8 @@ const Learning = ({ Learning, onBack }) => {
                                   "learn",
                                   JSON.stringify(t)
                                 );
+                                // Mark topic as completed when user starts
+                                markAsCompleted(t.title);
                               }}
                               className="flex gap-1 items-center text-lg border rounded-2xl hover:text-indigo-800 py-1 hover:bg-white px-2 bg-blue-600 text-white cursor-pointer"
                             >
