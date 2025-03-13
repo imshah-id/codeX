@@ -11,7 +11,6 @@ const AuthProvider = ({ children }) => {
 useEffect(() => {
   const token = localStorage.getItem("token");
   const adminStatus = localStorage.getItem("isAdmin"); // ✅ Now this will not be null
-  console.log("Admin status from localStorage:", adminStatus);
 
   if (token) {
     setIsAuth(true);
