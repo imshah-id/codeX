@@ -131,13 +131,15 @@ const Learning = ({ Learning, onBack }) => {
             </div>
           </div>
 
-          <main className="bg-gray-50 h-full overflow-y-auto">
+          <main className="bg-gray-50 h-ful overflow-y-auto pb-10">       
             {filteredTopics.length > 0 ? (
               <div className="max-w-7xl mx-auto h-[calc(100vh-100px)] overflow-y-auto">
                 <h1 className="font-semibold text-lg md:text-2xl p-4">
                   Getting Started with {Learning.name}
                 </h1>
-                <div className="md:grid flex flex-col grid-cols-2 gap-4 p-4">
+                <div className="md:grid flex flex-col grid-cols-2
+                mb-12
+                gap-4 p-4">
                   {filteredTopics.map((t) => (
                     <div
                       key={t.title}

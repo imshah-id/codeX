@@ -8,9 +8,10 @@ const LanguageSelection = () => {
   const [error, setError] = useState(null);
   const [learn, setLearn] = useState(null);
   const [confirmPopup, setConfirmPopup] = useState(null);
-  const [userLanguages, setUserLanguages] = useState([]); // ✅ Ensure it's initialized as an array
+  const [userLanguages, setUserLanguages] = useState([]);
 
   const uri = import.meta.env.VITE_BASE_URI;
+  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
     const fetchLanguages = async () => {
@@ -18,7 +19,7 @@ const LanguageSelection = () => {
         const response = await axios.get(`${uri}/api/languages/language`);
         setLanguages(response.data);
       } catch (error) {
-        console.error("There was an error!", error);
+        console.error("Error fetching languages:", error);
         setError("Failed to fetch data");
       } finally {
         setLoading(false);
@@ -26,27 +27,25 @@ const LanguageSelection = () => {
     };
 
     const fetchUserLanguages = async () => {
+      if (!userId) return;
       try {
-        const userId = localStorage.getItem("userId");
         const response = await axios.get(`${uri}/api/user/${userId}`);
-        setUserLanguages(response.data.languages || []); // ✅ Ensure it's an array
+        setUserLanguages(response.data.languages || []);
       } catch (error) {
-        console.error("Failed to fetch user progress:", error);
-        setUserLanguages([]); // ✅ Default to empty array in case of error
+        console.error("Error fetching user progress:", error);
+        setUserLanguages([]);
       }
     };
 
     fetchLanguages();
     fetchUserLanguages();
-  }, []);
+  }, [userId]);
 
-  const handleNo = () => {
-    setConfirmPopup(null);
-  };
+  const handleNo = () => setConfirmPopup(null);
 
   const handleConfirm = async (language) => {
     try {
-      const userId = localStorage.getItem("userId");
+      if (!userId) return;
 
       await axios.post(`${uri}/api/user/add`, {
         userId,
@@ -57,6 +56,7 @@ const LanguageSelection = () => {
         Array.isArray(prev) ? [...prev, language.name] : [language.name]
       );
 
+      setLearn(language); // 🚀 Immediately open topics
     } catch (error) {
       console.error("Error adding language to progress:", error);
       alert("Failed to add language to progress");
@@ -65,13 +65,17 @@ const LanguageSelection = () => {
     }
   };
 
- const openConfirmPopup = (language) => {
-   if (Array.isArray(userLanguages) && userLanguages.includes(language.name)) {
-     setLearn(language);
-     return;
-   }
-   setConfirmPopup(language);
- };
+  const openConfirmPopup = (language) => {
+    const isLanguageAdded =
+      Array.isArray(userLanguages) && userLanguages.includes(language.name);
+
+    if (!userId || isLanguageAdded) {
+      setLearn(language); // 🚀 Open topics directly
+      return;
+    }
+
+    setConfirmPopup(language);
+  };
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div className="text-center">{error}</div>;
@@ -108,28 +112,38 @@ const LanguageSelection = () => {
         <Learning Learning={learn} onBack={() => setLearn(null)} />
       )}
 
-      {/* ✅ Glassmorphism Confirmation Popup with Background Effect */}
+      {/* ✅ Glassmorphism Confirmation Popup */}
       {confirmPopup && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-lg">
-          {/* Background Effect */}
-          <div className="absolute inset-0 bg-[url('/path-to-pattern.png')] opacity-20 z-0"></div>
-
-          <div className="bg-white/20 backdrop-blur-2xl p-8 rounded-2xl shadow-xl w-96 text-center border border-white/30 relative z-10">
-            <h3 className="text-2xl font-bold text-white drop-shadow-lg mb-6">
-              Add {confirmPopup.name} to your progress?
+        <div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-md">
+          <div className="bg-white/90 shadow-xl rounded-2xl p-8 w-[90%] max-w-md text-center animate-fadeInUp">
+            <img
+              src={
+                confirmPopup.logo ||
+                "https://cdn-icons-png.flaticon.com/512/3039/3039436.png"
+              }
+              alt={confirmPopup.name}
+              className="w-16 h-16 mx-auto mb-4 rounded-full shadow-md"
+            />
+            <h3 className="text-2xl font-semibold text-gray-900">
+              Add <span className="text-indigo-500">{confirmPopup.name}</span>{" "}
+              to your progress?
             </h3>
-            <div className="flex justify-center space-x-6">
+            <p className="text-gray-600 mt-2">
+              You can track your learning anytime.
+            </p>
+
+            <div className="flex justify-center gap-4 mt-6">
               <button
                 onClick={() => handleConfirm(confirmPopup)}
-                className="px-6 py-2 text-lg bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 transition-all"
+                className="px-6 py-2 text-lg bg-indigo-500 text-white rounded-full shadow-md hover:bg-indigo-600 transition-all"
               >
-                Yes
+                Yes, Add
               </button>
               <button
                 onClick={handleNo}
-                className="px-6 py-2 text-lg bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition-all"
+                className="px-6 py-2 text-lg bg-gray-300 text-gray-800 rounded-full shadow-md hover:bg-gray-400 transition-all"
               >
-                No
+                Cancel
               </button>
             </div>
           </div>
