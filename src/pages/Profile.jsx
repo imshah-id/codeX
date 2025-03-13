@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useContext } from "react";
 import { FaEdit, FaCheck, FaTimes } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-
+import { AuthContext } from "../Contexts/AuthContext";
 const Profile = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState({ name: "", role: "", email: "" });
@@ -10,6 +10,8 @@ const Profile = () => {
   const [newPassword, setNewPassword] = useState("");
   const [editEmail, setEditEmail] = useState(false);
   const [editPassword, setEditPassword] = useState(false);
+  const { setIsAuth } = useContext(AuthContext);
+  
 const uri = import.meta.env.VITE_BASE_URI;
 
   useEffect(() => {
@@ -89,6 +91,7 @@ const uri = import.meta.env.VITE_BASE_URI;
       localStorage.removeItem("user");
       localStorage.removeItem("userRole");
       localStorage.removeItem("userId");
+      setIsAuth(null)
       navigate("/");
     }
   };

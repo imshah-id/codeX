@@ -1,48 +1,50 @@
-import React, { useCallback,  useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoPlayCircleOutline } from "react-icons/io5";
 import { FaArrowLeft, FaBookmark } from "react-icons/fa";
 import { FiSearch, FiBookmark } from "react-icons/fi";
-import { CgClose } from "react-icons/cg";
 import axios from "axios";
 
-const Learning = ({ Learning, onBack, userId }) => {
-  const [learn, setLearn] = useState(null); // Stores selected topic
+const Learning = ({ Learning, onBack }) => {
+  const [learn, setLearn] = useState(() => {
+    return JSON.parse(sessionStorage.getItem("learn")) || null;
+  });
+
   const [topics, setTopics] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [bookmarked, setBookmarked] = useState([]);
   const [progress, setProgress] = useState({ completed: [], pending: [] });
-const uri = import.meta.env.VITE_BASE_URI;
 
-  useCallback(() => {
+  const userId = localStorage.getItem("userId");
+  const uri = import.meta.env.VITE_BASE_URI;
+
+  useEffect(() => {
     async function fetchTopics() {
       try {
-        const response = await axios.get(
-          `${uri}/api/topics/listtopics`,
-          { params: { nam: Learning.name } }
-        );
+        const response = await axios.get(`${uri}/api/topics/listtopics`, {
+          params: { nam: Learning.name },
+        });
         setTopics(response.data);
-
-        // Fetch or Initialize user progress
         await fetchOrInitProgress(response.data);
-      } catch {
-        console.log("Error fetching topics");
+      } catch (error) {
+        console.log("Error fetching topics", error);
       }
     }
     fetchTopics();
   }, [Learning.name]);
 
-  // Fetch user progress or initialize if not exists
   async function fetchOrInitProgress(fetchedTopics) {
     try {
-      const response = await axios.get(
-        `${uri}/api/progress/${userId}`
-      );
-
-      // If language progress exists, update state
+      const response = await axios.get(`${uri}/api/user/${userId}`);
       if (response.data[Learning.name]) {
-        setProgress(response.data[Learning.name]);
+        const completedIds = response.data[Learning.name].completed || [];
+        const completedTitles = fetchedTopics
+          .filter((t) => completedIds.includes(t.title))
+          .map((t) => t.title);
+        const pendingTitles = fetchedTopics
+          .filter((t) => !completedIds.includes(t.title))
+          .map((t) => t.title);
+        setProgress({ completed: completedTitles, pending: pendingTitles });
       } else {
-        // If not, initialize progress
         await initializeProgress(fetchedTopics);
       }
     } catch (error) {
@@ -50,36 +52,34 @@ const uri = import.meta.env.VITE_BASE_URI;
     }
   }
 
-  // Initialize user progress for the selected language
   async function initializeProgress(fetchedTopics) {
     try {
-      const response = await axios.post(
-        `${uri}/api/progress/add`,
-        {
-          userId,
-          language: Learning.name,
-          topics: fetchedTopics.map((t) => t._id),
-        }
-      );
-      setProgress(response.data.progress.languages[Learning.name]);
+      await axios.post(`${uri}/api/user/add`, {
+        userId,
+        language: Learning.name,
+        topics: fetchedTopics.map((t) => t._id),
+      });
+
+      setProgress({
+        completed: [],
+        pending: fetchedTopics.map((t) => t.title),
+      });
     } catch (error) {
       console.log("Error initializing progress", error);
     }
   }
 
-  // Mark topic as completed
-  async function markAsCompleted(topic) {
+  async function markAsCompleted(topicId, topicTitle) {
     try {
-      await axios.post(`${uri}/api/progress/complete`, {
+      await axios.post(`${uri}/api/user/complete`, {
         userId,
         language: Learning.name,
-        topic,
+        topic: topicId,
       });
 
-      // Move topic from pending to completed in UI
       setProgress((prev) => ({
-        completed: [...prev.completed, topic],
-        pending: prev.pending.filter((id) => id !== topic),
+        completed: [...(prev?.completed || []), topicTitle],
+        pending: prev?.pending?.filter((t) => t !== topicTitle) || [],
       }));
     } catch (error) {
       console.log("Error marking topic as completed", error);
@@ -100,7 +100,6 @@ const uri = import.meta.env.VITE_BASE_URI;
 
   return (
     <div className="fixed top-0 left-0 w-full h-full bg-white">
-      {/* Navbar */}
       <div className="w-full bg-gray-800">
         <nav className="flex gap-6 max-w-7xl mx-auto text-white p-2 md:p-4">
           <button className="md:text-lg" onClick={onBack}>
@@ -117,10 +116,8 @@ const uri = import.meta.env.VITE_BASE_URI;
         </nav>
       </div>
 
-      {/* Hide content when modal is open */}
       {!learn && (
         <>
-          {/* Search Bar */}
           <div className="max-w-7xl mx-auto p-4">
             <div className="flex items-center gap-2 mb-4">
               <FiSearch className="text-gray-600" />
@@ -134,7 +131,6 @@ const uri = import.meta.env.VITE_BASE_URI;
             </div>
           </div>
 
-          {/* Main Content */}
           <main className="bg-gray-50 h-full overflow-y-auto">
             {filteredTopics.length > 0 ? (
               <div className="max-w-7xl mx-auto h-[calc(100vh-100px)] overflow-y-auto">
@@ -144,9 +140,9 @@ const uri = import.meta.env.VITE_BASE_URI;
                 <div className="md:grid flex flex-col grid-cols-2 gap-4 p-4">
                   {filteredTopics.map((t) => (
                     <div
-                      key={t._id}
+                      key={t.title}
                       className={`bg-white hover:scale-105 rounded-2xl flex flex-col justify-around p-4 md:p-6 shadow-2xl ${
-                        progress.completed.includes(t._id)
+                        progress?.completed.includes(t.title)
                           ? "border-green-500 border-2"
                           : ""
                       }`}
@@ -157,30 +153,51 @@ const uri = import.meta.env.VITE_BASE_URI;
                       <p className="text-gray-600 text-sm md:text-lg">
                         {t.bio}
                       </p>
-                      <section className="flex justify-between mt-10 py-2">
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => toggleBookmark(t._id)}
-                            className="text-xl"
-                          >
-                            {bookmarked.includes(t._id) ? (
-                              <FaBookmark className="text-yellow-500" />
-                            ) : (
-                              <FiBookmark />
-                            )}
-                          </button>
-                          <button
-                            onClick={() => {
-                              setLearn(t);
-                              markAsCompleted(t._id);
-                            }}
-                            className="flex gap-1 items-center text-lg border rounded-2xl hover:text-indigo-800 py-1 hover:bg-white px-2 bg-blue-600 text-white cursor-pointer"
-                          >
-                            <IoPlayCircleOutline />
-                            Start
-                          </button>
-                        </div>
-                      </section>
+                      <div className="flex items-center justify-between ">
+                        <p
+                          className={`rounded-2xl flex mt-10 flex-col justify-around p-1 md:p-2 shadow-2xl ${
+                            progress?.completed.includes(t.title)
+                              ? "border-green-500 border-2"
+                              : ""
+                          } ${
+                            t.level === "Beginner"
+                              ? "bg-green-200 text-green-900"
+                              : t.level === "Intermediate"
+                              ? "bg-yellow-200 text-yellow-900"
+                              : "bg-red-200 text-red-900"
+                          }`}
+                        >
+                          Level: {t.level}
+                        </p>
+                        <section className="flex justify-between mt-10 py-2">
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => toggleBookmark(t._id)}
+                              className="text-xl"
+                            >
+                              {bookmarked.includes(t._id) ? (
+                                <FaBookmark className="text-yellow-500" />
+                              ) : (
+                                <FiBookmark />
+                              )}
+                            </button>
+                            <button
+                              onClick={() => {
+                                setLearn(t);
+                                sessionStorage.setItem(
+                                  "learn",
+                                  JSON.stringify(t)
+                                );
+                                markAsCompleted(t.title, t.title);
+                              }}
+                              className="flex gap-1 items-center text-lg border rounded-2xl hover:text-indigo-800 py-1 hover:bg-white px-2 bg-blue-600 text-white cursor-pointer"
+                            >
+                              <IoPlayCircleOutline />
+                              Start
+                            </button>
+                          </div>
+                        </section>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -194,21 +211,27 @@ const uri = import.meta.env.VITE_BASE_URI;
         </>
       )}
 
-      {/* Learning Modal */}
       {learn && (
-        <div className="fixed top-0 left-0 w-full h-full bg-white flex justify-center items-center">
-          <section className="p-4 max-w-4xl mx-auto bg-white shadow-lg rounded-lg h-[90vh] overflow-y-auto">
-            <h2 className="text-2xl font-bold mb-4">{learn.title}</h2>
-            <div
-              dangerouslySetInnerHTML={{ __html: learn.details }}
-              className="overflow-y-auto max-h-[70vh] p-2 border"
-            />
-            <button
-              onClick={() => setLearn(null)}
-              className="mt-4 bg-red-500 text-white px-4 py-2 rounded"
-            >
-              Close
-            </button>
+        <div className="fixed top-0  left-0 w-full h-full bg-white flex justify-center items-center">
+          <button
+            onClick={() => {
+              setLearn(null);
+              sessionStorage.removeItem("learn");
+            }}
+            className="absolute  cursor-pointer top-2 right-8   px-2  text-gray-600 hover:text-red-600 text-3xl md:text-5xl"
+          >
+            &times;
+          </button>
+          <section className="p-4 max-w-4xl mx-auto bg-white shadow-lg rounded-lg h-[90vh] overflow-y-auto relative">
+            <div className="relative">
+              <h2 className="text-xl md:text-2xl font-bold mb-4">
+                {learn.title}
+              </h2>
+              <div
+                dangerouslySetInnerHTML={{ __html: learn.details }}
+                className="prose prose-lg max-w-full w-full overflow-x-auto p-2 border relative"
+              />
+            </div>
           </section>
         </div>
       )}
