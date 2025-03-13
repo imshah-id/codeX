@@ -5,14 +5,14 @@ import { FiSearch, FiBookmark } from "react-icons/fi";
 import axios from "axios";
 
 const Learning = ({ Learning, onBack }) => {
-  const [learn, setLearn] = useState(() => {
-    return JSON.parse(sessionStorage.getItem("learn")) || null;
-  });
-
+  const [learn, setLearn] = useState(
+    () => JSON.parse(sessionStorage.getItem("learn")) || null
+  );
   const [topics, setTopics] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [bookmarked, setBookmarked] = useState([]);
   const [progress, setProgress] = useState({ completed: [], pending: [] });
+  const [isLoading, setIsLoading] = useState(true); // NEW state for loading
 
   const userId = localStorage.getItem("userId");
   const uri = import.meta.env.VITE_BASE_URI;
@@ -27,6 +27,8 @@ const Learning = ({ Learning, onBack }) => {
         await fetchOrInitProgress(response.data);
       } catch (error) {
         console.log("Error fetching topics", error);
+      } finally {
+        setIsLoading(false); // Stop loading
       }
     }
     fetchTopics();
@@ -69,31 +71,6 @@ const Learning = ({ Learning, onBack }) => {
     }
   }
 
-  async function markAsCompleted(topicId, topicTitle) {
-    try {
-      await axios.post(`${uri}/api/user/complete`, {
-        userId,
-        language: Learning.name,
-        topic: topicId,
-      });
-
-      setProgress((prev) => ({
-        completed: [...(prev?.completed || []), topicTitle],
-        pending: prev?.pending?.filter((t) => t !== topicTitle) || [],
-      }));
-    } catch (error) {
-      console.log("Error marking topic as completed", error);
-    }
-  }
-
-  const toggleBookmark = (topicId) => {
-    setBookmarked((prev) =>
-      prev.includes(topicId)
-        ? prev.filter((id) => id !== topicId)
-        : [...prev, topicId]
-    );
-  };
-
   const filteredTopics = topics.filter((t) =>
     t.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -131,15 +108,17 @@ const Learning = ({ Learning, onBack }) => {
             </div>
           </div>
 
-          <main className="bg-gray-50 h-ful overflow-y-auto pb-10">       
-            {filteredTopics.length > 0 ? (
+          <main className="bg-gray-50 h-full overflow-y-auto pb-10">
+            {isLoading ? (
+              <section className="max-w-7xl mx-auto text-gray-600 text-center text-lg md:text-xl p-4">
+                <p>Loading...</p>
+              </section>
+            ) : filteredTopics.length > 0 ? (
               <div className="max-w-7xl mx-auto h-[calc(100vh-100px)] overflow-y-auto">
                 <h1 className="font-semibold text-lg md:text-2xl p-4">
                   Getting Started with {Learning.name}
                 </h1>
-                <div className="md:grid flex flex-col grid-cols-2
-                mb-12
-                gap-4 p-4">
+                <div className="md:grid flex flex-col grid-cols-2 mb-12 gap-4 p-4">
                   {filteredTopics.map((t) => (
                     <div
                       key={t.title}
@@ -155,7 +134,7 @@ const Learning = ({ Learning, onBack }) => {
                       <p className="text-gray-600 text-sm md:text-lg">
                         {t.bio}
                       </p>
-                      <div className="flex items-center justify-between ">
+                      <div className="flex items-center justify-between">
                         <p
                           className={`rounded-2xl flex mt-10 flex-col justify-around p-1 md:p-2 shadow-2xl ${
                             progress?.completed.includes(t.title)
@@ -174,7 +153,13 @@ const Learning = ({ Learning, onBack }) => {
                         <section className="flex justify-between mt-10 py-2">
                           <div className="flex gap-2">
                             <button
-                              onClick={() => toggleBookmark(t._id)}
+                              onClick={() =>
+                                setBookmarked((prev) =>
+                                  prev.includes(t._id)
+                                    ? prev.filter((id) => id !== t._id)
+                                    : [...prev, t._id]
+                                )
+                              }
                               className="text-xl"
                             >
                               {bookmarked.includes(t._id) ? (
@@ -190,7 +175,6 @@ const Learning = ({ Learning, onBack }) => {
                                   "learn",
                                   JSON.stringify(t)
                                 );
-                                markAsCompleted(t.title, t.title);
                               }}
                               className="flex gap-1 items-center text-lg border rounded-2xl hover:text-indigo-800 py-1 hover:bg-white px-2 bg-blue-600 text-white cursor-pointer"
                             >
@@ -214,13 +198,13 @@ const Learning = ({ Learning, onBack }) => {
       )}
 
       {learn && (
-        <div className="fixed top-0  left-0 w-full h-full bg-white flex justify-center items-center">
+        <div className="fixed top-0 left-0 w-full h-full bg-white flex justify-center items-center">
           <button
             onClick={() => {
               setLearn(null);
               sessionStorage.removeItem("learn");
             }}
-            className="absolute  cursor-pointer top-2 right-8   px-2  text-gray-600 hover:text-red-600 text-3xl md:text-5xl"
+            className="absolute cursor-pointer top-2 right-8 px-2 text-gray-600 hover:text-red-600 text-3xl md:text-5xl"
           >
             &times;
           </button>
