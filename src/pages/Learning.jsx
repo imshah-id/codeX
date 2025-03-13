@@ -118,7 +118,7 @@ const Learning = ({ Learning, onBack }) => {
                 <h1 className="font-semibold text-lg md:text-2xl p-4">
                   Getting Started with {Learning.name}
                 </h1>
-                <div className="md:grid flex flex-col grid-cols-2 mb-12 gap-4 p-4">
+                <div className="md:grid flex flex-col grid-cols-2 mb-16 gap-4 p-4">
                   {filteredTopics.map((t) => (
                     <div
                       key={t.title}
