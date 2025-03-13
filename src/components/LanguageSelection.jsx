@@ -30,13 +30,15 @@ const LanguageSelection = () => {
         axios.get(`${uri}/api/user/${userId}`),
       ]);
 
-      // Convert object keys to array if API response is an object
-      const userLangs = new Set([
-        ...storedLanguages,
-        ...(userRes.data.languages && typeof userRes.data.languages === "object"
-          ? Object.keys(userRes.data.languages)
-          : []),
-      ]);
+      // Handle new user without any languages
+      const userLangs = userRes.data.languages
+        ? new Set([
+            ...storedLanguages,
+            ...(typeof userRes.data.languages === "object"
+              ? Object.keys(userRes.data.languages)
+              : []),
+          ])
+        : new Set(storedLanguages); // For new users, use stored languages or empty set
 
       // Update state
       setLanguages(langRes.data);
