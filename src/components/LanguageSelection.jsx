@@ -7,46 +7,53 @@ const LanguageSelection = () => {
   const [learn, setLearn] = useState(null);
   const [confirmPopup, setConfirmPopup] = useState(null);
   const [userLanguages, setUserLanguages] = useState(new Set());
+  const [loading, setLoading] = useState(true); // Track loading state
 
   const uri = import.meta.env.VITE_BASE_URI;
   const userId = localStorage.getItem("userId");
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Load previously stored user languages from localStorage
-        const storedLanguages =
-          JSON.parse(localStorage.getItem("userLanguages")) || [];
-
-        const [langRes, userRes] = await Promise.all([
-          axios.get(`${uri}/api/languages/language`),
-          userId
-            ? axios.get(`${uri}/api/user/${userId}`)
-            : Promise.resolve({ data: {} }),
-        ]);
-
-
-        // Convert object keys to array if API response is an object
-        const userLangs = new Set([
-          ...storedLanguages,
-          ...(userRes.data.languages &&
-          typeof userRes.data.languages === "object"
-            ? Object.keys(userRes.data.languages)
-            : []),
-        ]);
-
-
-        setLanguages(langRes.data);
-        setUserLanguages(userLangs);
-        localStorage.setItem("userLanguages", JSON.stringify([...userLangs]));
-      } catch (error) {
-        console.error("Error fetching data:", error);
+  // Function to fetch languages and user data
+  const fetchData = async () => {
+    try {
+      if (!userId) {
+        setLoading(false); // If no userId, we stop loading
+        return;
       }
-    };
 
+      // Load previously stored user languages from localStorage
+      const storedLanguages =
+        JSON.parse(localStorage.getItem("userLanguages")) || [];
+
+      // Fetch languages and user data concurrently
+      const [langRes, userRes] = await Promise.all([
+        axios.get(`${uri}/api/languages/language`),
+        axios.get(`${uri}/api/user/${userId}`),
+      ]);
+
+      // Convert object keys to array if API response is an object
+      const userLangs = new Set([
+        ...storedLanguages,
+        ...(userRes.data.languages && typeof userRes.data.languages === "object"
+          ? Object.keys(userRes.data.languages)
+          : []),
+      ]);
+
+      // Update state
+      setLanguages(langRes.data);
+      setUserLanguages(userLangs);
+      localStorage.setItem("userLanguages", JSON.stringify([...userLangs]));
+      setLoading(false); // Stop loading once the data is fetched
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setLoading(false); // Stop loading on error
+    }
+  };
+
+  useEffect(() => {
     fetchData();
-  }, [userId]);
+  }, [userId]); // Re-fetch data if userId changes
 
+  // Handle adding a language to the user's progress
   const handleConfirm = async (language) => {
     if (!userId) return;
 
@@ -71,14 +78,18 @@ const LanguageSelection = () => {
     }
   };
 
+  // Open confirmation popup when user clicks "Start Learning"
   const openConfirmPopup = (language) => {
-
     if (!userId || userLanguages.has(language.name)) {
       setLearn(language); // Skip popup if already added
     } else {
       setConfirmPopup(language);
     }
   };
+
+  if (loading) {
+    return <div className="text-center py-8">Loading languages...</div>; // Show loading state
+  }
 
   return (
     <section className="max-w-7xl mx-auto">
